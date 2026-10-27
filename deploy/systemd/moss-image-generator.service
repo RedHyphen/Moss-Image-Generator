@@ -1,0 +1,24 @@
+[Unit]
+Description=Moss-Image-Generator web application
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Projects/Moss
+EnvironmentFile=-%h/Projects/Moss/.env
+Environment=PYTHONUNBUFFERED=1
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ExecStart=%h/Projects/Moss/scripts/start.sh
+ExecStop=%h/Projects/Moss/scripts/stop.sh
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+
+# This unit is intentionally not enabled by the installer. Review the
+# absolute paths, .env bind/trusted-subnet settings, and firewall first.
+
+[Install]
+WantedBy=default.target

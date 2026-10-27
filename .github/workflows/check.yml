@@ -1,0 +1,41 @@
+name: MOSS checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install Firefox when the runner image does not provide it
+        run: |
+          if ! command -v firefox >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y firefox
+          fi
+
+      - name: Install development dependencies
+        run: ./scripts/install.sh
+
+      - name: Verify repository and application checks
+        run: |
+          git diff --check
+          make check
